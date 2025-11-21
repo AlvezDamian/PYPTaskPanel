@@ -66,6 +66,6 @@ Después de configurar las variables y hacer deploy:
 4. Verifica que las peticiones vayan a `https://pyptaskpanel.onrender.com`
 5. Si hay errores de CORS, verifica que en Render tengas configurado:
    ```
-   FRONTEND_URL=https://tu-proyecto.vercel.app
+   FRONTEND_URL=https://pyp-task-panel.vercel.app
    ```
 

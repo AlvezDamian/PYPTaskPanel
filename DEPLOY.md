@@ -76,7 +76,7 @@ vercel --prod
    - En la sección "Environment", agrega:
      ```
      JWT_SECRET=genera-una-clave-super-segura-de-minimo-32-caracteres
-     FRONTEND_URL=https://tu-frontend.vercel.app
+     FRONTEND_URL=https://pyp-task-panel.vercel.app
      ```
    - **Nota:** `DATABASE_URL` se configura automáticamente cuando conectas la base de datos
 
@@ -123,7 +123,7 @@ vercel --prod
      DATABASE_URL=<pega la Internal Database URL que copiaste>
      JWT_SECRET=genera-una-clave-super-segura-de-minimo-32-caracteres
      JWT_EXPIRES_IN=7d
-     FRONTEND_URL=https://tu-frontend.vercel.app
+     FRONTEND_URL=https://pyp-task-panel.vercel.app
      ```
    - **Importante:** Render usa el puerto `10000` por defecto, no `3001`
 
@@ -193,7 +193,7 @@ PORT=10000
 DATABASE_URL=postgresql://user:password@host:port/database
 JWT_SECRET=genera-una-clave-super-segura-de-minimo-32-caracteres
 JWT_EXPIRES_IN=7d
-FRONTEND_URL=https://tu-frontend.vercel.app
+FRONTEND_URL=https://pyp-task-panel.vercel.app
 ```
 
 **Importante:**
@@ -204,11 +204,13 @@ FRONTEND_URL=https://tu-frontend.vercel.app
 ### Frontend (Vercel)
 
 ```env
-REACT_APP_API_URL=https://pyp-taskpanel-backend.onrender.com
+REACT_APP_API_URL=https://pyptaskpanel.onrender.com
 REACT_APP_API_TIMEOUT=10000
 ```
 
-**Nota:** La URL del backend será `https://pyp-taskpanel-backend.onrender.com` (o el nombre que le hayas dado)
+**URLs del proyecto:**
+- **Backend (Render):** `https://pyptaskpanel.onrender.com`
+- **Frontend (Vercel):** `https://pyp-task-panel.vercel.app`
 
 ## ✅ Checklist de Deploy
 
