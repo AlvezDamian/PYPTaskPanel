@@ -28,7 +28,7 @@ Esta guía explica cómo hacer deploy del frontend y backend en producción.
 
 3. **Configura Variables de Entorno:**
    - `REACT_APP_API_URL`: URL de tu backend en producción
-     - Ejemplo: `https://pyp-taskpanel-backend.onrender.com` (la obtendrás después de deployar el backend)
+     - **URL del backend:** `https://pyptaskpanel.onrender.com`
    - `REACT_APP_API_TIMEOUT`: `10000` (opcional)
 
 4. **Deploy:**
