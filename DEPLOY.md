@@ -5,9 +5,11 @@ Esta guía explica cómo hacer deploy del frontend y backend en producción.
 ## 📋 Prerequisitos
 
 - Cuenta en [Vercel](https://vercel.com) (para frontend)
-- Cuenta en [Render](https://render.com) (para backend)
-- Base de datos PostgreSQL en producción (Render puede crear una automáticamente)
+- Cuenta en [Railway](https://railway.app) (para backend - recomendado) o [Render](https://render.com)
+- Base de datos MySQL en producción (Railway puede crear una automáticamente)
 - Variables de entorno configuradas
+
+**Nota:** Este proyecto usa MySQL. Railway soporta MySQL nativamente, mientras que Render solo ofrece PostgreSQL.
 
 ## 🚀 Deploy del Frontend (Vercel)
 
@@ -52,7 +54,20 @@ vercel
 vercel --prod
 ```
 
-## 🔧 Deploy del Backend (Render)
+## 🔧 Deploy del Backend
+
+### Opción 1: Railway (Recomendado - Soporta MySQL nativo)
+
+Railway es la mejor opción porque soporta MySQL nativamente. Ver la guía completa en [RAILWAY_DEPLOY.md](./RAILWAY_DEPLOY.md).
+
+**Pasos rápidos:**
+1. Crea proyecto en Railway desde GitHub
+2. Crea base de datos MySQL (Railway → New → Database → MySQL)
+3. Configura servicio backend (Root Directory: `backend`)
+4. Agrega variables de entorno (ver RAILWAY_DEPLOY.md)
+5. Ejecuta migraciones
+
+### Opción 2: Render (Requiere MySQL externo)
 
 ### Opción 1: Deploy con render.yaml (Recomendado - Más fácil)
 
