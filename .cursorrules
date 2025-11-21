@@ -1,0 +1,493 @@
+# GoodDevelopment - Reglas Generales para Desarrollo Seguro con Cursor IA
+
+## Mindset → Ingeniería, Seguridad y Escalabilidad por defecto
+
+### 1. Architecture First: no escribir código sin entender el contexto técnico
+
+Antes de generar código, Cursor debe pedir o inferir:
+- Stack tecnológico.
+- Flujos críticos del sistema.
+- Modelos de datos.
+- Interacciones entre servicios.
+- Requerimientos de seguridad y performance.
+- Exigir siempre diagramas, flujos y dependencias antes de tocar archivos.
+
+### 2. Código Seguro by Default
+
+Todas las decisiones deben alinearse con:
+- Principio de mínimo privilegio.
+- Validación estricta del input.
+- Estrategias de sanitización contra inyección.
+- Uso correcto de tipos (TypeScript, Pydantic, DTOs).
+- Evitar exponer secretos: nunca imprimir env, keys ni tokens.
+
+Revisar diffs para detectar:
+- Hardcodes.
+- Accesos indebidos.
+- Falta de try/catch o handling.
+- Falta de autorización.
+
+### 3. Código consistente y mantenible
+
+Cursor siempre debe producir:
+- Nombres claros, semánticos, estándar del proyecto.
+- Funciones cortas, modulares y testeables.
+- Patrones de diseño adecuados (Factory, Repository, Dependency Injection).
+- Separación estricta: core logic → infra → UI → tests.
+
+Y evitar:
+- God files.
+- Copy-paste code.
+- Lógica duplicada.
+- Side effects innecesarios.
+
+### 4. Commits, ramas y control de versiones
+
+Seguir siempre conventional commits.
+
+No fusionar PRs sin:
+- Tests que pasen.
+- Linter.
+- Revisión de seguridad básica.
+
+Mantener el proyecto con ramas:
+- main → producción.
+- develop → staging.
+- feature/ → nuevas funcionalidades.
+
+### 5. Documentación mínima obligatoria
+
+Cada bloque generado por Cursor debe incluir:
+- Explicación corta del razonamiento técnico.
+- Riesgos potenciales.
+- Recomendaciones de extensión futura.
+- README actualizado por cada módulo nuevo.
+
+### 6. Testing y calidad
+
+Regla obligatoria:
+- No entregar nada sin tests unitarios y/o e2e según aplique.
+
+Testing debe cubrir:
+- Paths críticos.
+- Falta de permisos.
+- Inputs inválidos.
+- Casos límite.
+
+Cursor debe sugerir pruebas adicionales si detecta:
+- Código no determinista.
+- Dependencias externas.
+- Funciones con demasiada lógica.
+
+### 7. Observability y logging
+
+Añadir logs estructurados, nunca datos sensibles.
+- Trazabilidad por request-id.
+- Manejo correcto de errores (custom error classes).
+- Rutas y servicios deben mostrar métricas claras.
+
+### 8. Performance y escalabilidad
+
+Cursor debe auditar cada código con foco en:
+- Complejidad algorítmica.
+- Queries a BD optimizables.
+- Uso eficiente de memoria.
+- Buenas prácticas de caching.
+
+Si encuentra anti-patrones:
+- Lo reescribe automáticamente.
+- Justifica el cambio.
+
+### 9. Cumplimiento de estándares
+
+Cursor debe seguir estándares modernos:
+- OWASP Top 10 (web).
+- SANS Top 25.
+- CWE relevantes.
+- Seguridad API: OWASP API Security Top 10.
+
+### 10. Revisión continua por IA (self-audit)
+
+Antes de guardar cambios debe auditar el diff con un checklist:
+- ¿Se cumplen las reglas de seguridad?
+- ¿Hay inputs sin validar?
+- ¿Hay endpoints sin permisos?
+- ¿Hay riesgo de fuga de datos?
+- ¿Hay lógica acoplada?
+
+Si falla algo → no escribir el cambio.
+
+### 11. Infraestructura y DevOps
+
+Las reglas obligan a:
+- No incluir pipelines inseguros.
+- Escapar comandos shell.
+- No instalar paquetes sin justificar.
+- Mantener dependencias actualizadas sin romper versiones.
+
+### 12. UX para el desarrollador
+
+Cursor debe:
+- Ser explícito.
+- No inventar archivos.
+- No reescribir módulos completos innecesariamente.
+- Operar de forma incremental.
+- Mantener estilo del proyecto (lint, prettier, black, etc.)
+
+---
+
+## Node.js – Reglas base
+
+### 1. Versión y mantenimiento
+
+- Usar siempre la versión LTS de Node.js y planificar upgrades periódicos.
+- No correr producción en versiones EOL (End of Life).
+- Verificar compatibilidad antes de actualizar dependencias.
+
+### 2. Gestión de dependencias y seguridad
+
+- Bloquear dependencias vulnerables: usar `npm audit`, Snyk u otra herramienta SCA en CI.
+- Nunca instalar paquetes sin revisar:
+  - Mantenimiento activo del paquete.
+  - Número de descargas y popularidad.
+  - Historial de vulnerabilidades.
+- Integrar escaneo de vulnerabilidades en el pipeline de CI/CD.
+
+### 3. Secretos y variables de entorno
+
+- Nunca exponer secretos en el código.
+- Usar solo variables de entorno + gestor de secretos (AWS Secrets Manager, HashiCorp Vault, etc.).
+- Prohibido hacer `console.log(process.env)` en código de aplicación.
+- Validar que todas las variables de entorno requeridas estén presentes al iniciar la aplicación.
+
+### 4. Validación y sanitización de inputs
+
+- Validar y sanear todo input externo (body, query, headers, params) antes de usarlo.
+- Integrar un validador estándar (Zod, Joi, Yup) a nivel de capa HTTP.
+- Rechazar requests con datos inválidos antes de procesarlos.
+- Sanitizar strings para prevenir inyección (SQL, NoSQL, XSS).
+
+### 5. Cabeceras HTTP seguras
+
+- Proteger HTTP con cabeceras seguras usando `helmet` u otro middleware.
+- Configurar obligatoriamente:
+  - CSP (Content Security Policy).
+  - X-Frame-Options.
+  - X-Content-Type-Options.
+  - HSTS (HTTP Strict Transport Security).
+  - X-XSS-Protection.
+  - Referrer-Policy.
+
+### 6. Manejo centralizado de errores
+
+- Manejar errores centralizadamente con un error handler middleware.
+- Nunca filtrar stacktraces crudos al cliente en producción.
+- Loguear internamente con correlación de request (request-id).
+- Clasificar errores (4xx vs 5xx) y responder apropiadamente.
+- No exponer detalles internos del sistema en respuestas de error.
+
+### 7. Arquitectura no bloqueante
+
+- Diseñar servicios sin bloqueo: evitar operaciones síncronas pesadas.
+- Usar siempre I/O asíncrono (async/await, Promises).
+- Offload de CPU intensa a colas/workers (Bull, BullMQ, etc.).
+- No usar `fs.readFileSync`, `JSON.parse` en rutas críticas.
+- Considerar worker threads para tareas CPU-bound.
+
+### 8. Estructura de proyecto
+
+- Estandarizar estructura de proyecto: separar capas claramente.
+- Organización recomendada:
+  - `routers/` o `routes/` → definición de endpoints.
+  - `controllers/` → lógica de request/response.
+  - `services/` → lógica de negocio.
+  - `repositories/` o `models/` → acceso a datos.
+  - `domain/` → entidades y reglas de dominio.
+  - `infra/` → configuración, middleware, utilidades.
+- Favorecer SOLID y testeo unitario.
+- Un archivo por responsabilidad.
+
+### 9. Logging y métricas
+
+- Logueo y métricas desde el día uno.
+- Logs estructurados en formato JSON (Winston, Pino, etc.).
+- Nunca incluir datos sensibles en logs (passwords, tokens, PII).
+- Métricas de performance y errores (Prometheus, StatsD, etc.).
+- Correlación de logs con request-id para trazabilidad.
+- Niveles de log apropiados (error, warn, info, debug).
+
+### 10. Rate limiting y protección DoS
+
+- Aplicar rate limiting en todas las superficies públicas:
+  - API endpoints.
+  - Endpoints de autenticación.
+  - Endpoints que golpean la BD.
+- Usar middleware de rate limiting (express-rate-limit, etc.).
+- Configurar límites por IP, usuario, o endpoint.
+- Protección contra DoS: timeouts, límites de tamaño de body, etc.
+- Considerar CAPTCHA para endpoints sensibles bajo ataque.
+
+---
+
+## NestJS – Reglas de arquitectura y seguridad
+
+### 1. Arquitectura modular obligatoria
+
+- Cada feature va en su propio módulo (UsersModule, AuthModule, etc.).
+- Cada módulo debe contener:
+  - Controllers específicos del dominio.
+  - Services con lógica de negocio.
+  - DTOs para validación de entrada/salida.
+  - Entities para modelos de datos.
+  - Guards, interceptors y filters cuando apliquen.
+- Evitar módulos monolíticos o "god modules".
+
+### 2. Providers y Dependency Injection
+
+- Toda lógica de negocio va en servicios inyectables (`@Injectable()`).
+- Nada de lógica pesada en controllers: controllers solo coordinan.
+- Usar DI para todas las dependencias: no instanciar clases directamente.
+- Favorecer inyección por constructor sobre inyección por propiedades.
+- Usar interfaces para desacoplar implementaciones.
+
+### 3. DTO + ValidationPipe en todos los endpoints
+
+- Definir DTOs con `class-validator` para validación de tipos.
+- Usar `ValidationPipe` global con:
+  - `whitelist: true` → elimina propiedades no definidas en el DTO.
+  - `forbidNonWhitelisted: true` → rechaza requests con propiedades extra.
+  - `transform: true` → transforma el payload al tipo del DTO.
+- Validar tanto DTOs de entrada (CreateUserDto) como de salida (UserResponseDto).
+- No confiar en validación del frontend: validar siempre en el backend.
+
+### 4. Autenticación y autorización con Guards
+
+- Usar `AuthGuard` para proteger rutas que requieren autenticación.
+- Implementar `RolesGuard` o guards custom para RBAC/ABAC.
+- Las rutas críticas nunca deben depender solo del frontend.
+- Aplicar guards a nivel de controlador o método según necesidad.
+- Usar decoradores custom (`@Roles()`, `@Public()`) para claridad.
+- Validar tokens JWT correctamente y manejar refresh tokens.
+
+### 5. Config module centralizado
+
+- Usar `@nestjs/config` + `ConfigModule.forRoot({ isGlobal: true })`.
+- Validar el esquema de variables de entorno con Joi o Zod.
+- Crear interfaces TypeScript para tipado de configuración.
+- Separar configuraciones por ambiente (development, production, test).
+- Nunca hardcodear valores de configuración en el código.
+- Usar `ConfigService` para acceder a variables de entorno tipadas.
+
+### 6. Exception Filters para manejo de errores
+
+- Capturar y normalizar respuestas de error con Exception Filters.
+- No exponer detalles internos ni stacktraces al cliente en producción.
+- Crear excepciones custom que extiendan `HttpException`.
+- Mapear excepciones de dominio a códigos HTTP apropiados.
+- Loguear errores internamente con contexto completo (request-id, user, etc.).
+- Usar filtros globales para manejo consistente de errores.
+
+### 7. Interceptors para cross-cutting concerns
+
+- Logging, métricas, transformación de respuestas y caching deben ir en interceptors.
+- No duplicar lógica de cross-cutting en controllers.
+- Usar interceptors para:
+  - Logging estructurado de requests/responses.
+  - Métricas de performance (tiempo de respuesta, etc.).
+  - Transformación de respuestas (formato estándar).
+  - Caching de respuestas cuando aplique.
+- Aplicar interceptors globalmente o por ruta según necesidad.
+
+### 8. Dynamic modules para libs compartidas
+
+- Exponer APIs de configuración mediante módulos dinámicos.
+- Evitar hardcodes en módulos compartidos (config, logging, DB).
+- Usar `forRoot()` y `forRootAsync()` para módulos con configuración.
+- Permitir que cada módulo consumidor configure el módulo compartido.
+- Documentar opciones de configuración disponibles.
+
+### 9. Tests en todos los módulos
+
+- Usar `TestingModule` de Nest para unit tests de services.
+- Implementar e2e tests para controllers y flujos completos.
+- No mergear features sin cobertura mínima de tests.
+- Mockear dependencias externas (BD, APIs, servicios) en unit tests.
+- Usar `@nestjs/testing` para crear módulos de prueba.
+- Mantener tests rápidos y deterministas.
+
+---
+
+## MySQL – Reglas de diseño, seguridad y performance
+
+### 1. Consultas parametrizadas (Prepared Statements)
+
+- Usar siempre consultas parametrizadas para evitar SQL Injection.
+- Prohibido concatenar strings con input de usuario en queries.
+- Usar placeholders (`?` o `:param`) en todas las consultas dinámicas.
+- Validar y sanitizar inputs antes de pasarlos a las consultas.
+- Revisar código para detectar concatenación de strings en queries SQL.
+
+### 2. Engine y claves primarias
+
+- Elegir InnoDB como engine por defecto para todas las tablas nuevas.
+- Usar claves primarias enteras autoincrementales o UUID estables.
+- Evitar MyISAM para nuevas tablas (solo legacy si es necesario).
+- InnoDB proporciona transacciones ACID, foreign keys y mejor concurrencia.
+
+### 3. Índices intencionales
+
+- Definir índices en columnas usadas en:
+  - JOINs frecuentes.
+  - Filtros WHERE comunes.
+  - Claves de búsqueda y ordenamiento.
+- Revisar estadísticas de tablas regularmente (`EXPLAIN`, `SHOW INDEX`).
+- Evitar full table scans innecesarios.
+- No crear índices excesivos (afectan INSERT/UPDATE performance).
+- Analizar queries lentas y optimizar índices según uso real.
+
+### 4. Charset y collation
+
+- Usar `utf8mb4` para charset y collation consistente.
+- Configurar a nivel de servidor, base de datos y tablas.
+- `utf8mb4` soporta emojis y caracteres multi-idioma completamente.
+- Evitar `utf8` (solo 3 bytes, incompleto).
+- Usar collation consistente (p.ej. `utf8mb4_unicode_ci`).
+
+### 5. Privilegios mínimos (Principio de mínimo privilegio)
+
+- Separar usuario de aplicación del usuario root.
+- Crear un usuario específico por base de datos con privilegios mínimos.
+- Sin permisos globales de administración para usuarios de aplicación.
+- Solo permisos necesarios: SELECT, INSERT, UPDATE, DELETE según necesidad.
+- Revisar y auditar permisos regularmente.
+
+### 6. Conexiones cifradas (TLS)
+
+- Forzar conexiones cifradas (TLS) entre aplicación y MySQL.
+- Obligatorio cuando el tráfico no es estrictamente local.
+- Configurar certificados según guía oficial de MySQL.
+- Verificar que las conexiones usen TLS en producción.
+- No transmitir credenciales ni datos sensibles sin cifrado.
+
+### 7. Lógica de negocio en aplicación
+
+- Evitar lógica de negocio compleja en stored procedures.
+- Priorizar que la lógica viva en la capa de aplicación o dominio.
+- Usar la BD principalmente para persistencia y reglas simples.
+- Stored procedures solo para:
+  - Operaciones batch complejas.
+  - Reglas de integridad simples.
+  - Optimizaciones específicas validadas.
+- Mantener la lógica de negocio testeable y versionada en código.
+
+### 8. Diseño de esquema normalizado
+
+- Diseñar el esquema normalizado primero (al menos hasta 3FN - Tercera Forma Normal).
+- Aplicar desnormalización controlada solo por motivos de performance.
+- Desnormalizar solo con métricas que justifiquen el cambio.
+- Documentar razones de desnormalización.
+- Revisar periódicamente si la desnormalización sigue siendo necesaria.
+
+### 9. Migraciones versionadas
+
+- No alterar esquemas a mano en producción.
+- Todo cambio de esquema debe pasar por una herramienta de migraciones:
+  - Prisma Migrate.
+  - TypeORM migrations.
+  - Knex migrations.
+  - Flyway.
+  - Otras herramientas equivalentes.
+- Migraciones deben ser:
+  - Versionadas y reversibles cuando sea posible.
+  - Revisadas antes de aplicar en producción.
+  - Probadas en ambientes de desarrollo/staging.
+  - Documentadas con propósito y contexto.
+
+---
+
+## Prisma (ORM) – Reglas + definición de ORM
+
+### 4.1. ¿Qué es un ORM?
+
+Un ORM (Object-Relational Mapper) es una capa que mapea tablas y filas de una base de datos relacional a modelos y objetos en el código. Permite leer y escribir datos usando una API de alto nivel, en lugar de escribir SQL manual, manteniendo tipos y relaciones de forma consistente.
+
+Prisma ORM usa un archivo de esquema declarativo (Prisma schema) para definir modelos, relaciones y configuración de la base; a partir de ahí genera un cliente type-safe para acceder a los datos desde Node/TS.
+
+### 4.2. Reglas para usar Prisma como ORM
+
+#### 1. Prisma schema como fuente de verdad
+
+- El Prisma schema es la fuente de verdad del modelo de datos.
+- Toda tabla, relación y constraint debe reflejarse en el schema.
+- Prohibido modificar la BD fuera de migraciones.
+- El schema debe estar sincronizado con la base de datos en todo momento.
+
+#### 2. Nombres orientados al dominio
+
+- Usar nombres de modelos y campos orientados al dominio, no al motor de BD.
+- Ejemplos: `User`, `Order`, `Portfolio` en lugar de nombres genéricos como `tbl_users`, `data_orders`.
+- Los nombres deben reflejar la semántica del negocio, no la estructura técnica.
+
+#### 3. Claves primarias y únicas explícitas
+
+- Definir claves primarias explícitas con `@id` en todos los modelos.
+- Usar `@unique` para campos que deben ser únicos a nivel de negocio.
+- Evitar inconsistencias y duplicados de negocio.
+- Preferir `@id @default(uuid())` o `@id @default(autoincrement())` según necesidad.
+
+#### 4. Modelado de relaciones explícito
+
+- Modelar relaciones de forma explícita con `@relation` y campos relacionales claros.
+- Evitar campos huérfanos sin constraint.
+- Definir relaciones uno-a-uno, uno-a-muchos y muchos-a-muchos correctamente.
+- Usar nombres descriptivos para las relaciones cuando hay múltiples relaciones entre modelos.
+
+#### 5. Soft delete para registros críticos
+
+- Implementar soft delete cuando aplique usando campos como `deletedAt` o flags booleanos.
+- En lugar de borrar físicamente registros críticos, marcar como eliminados.
+- Filtrar registros eliminados en queries por defecto.
+- Considerar índices en campos de soft delete para performance.
+
+#### 6. Prisma Migrate para cambios de esquema
+
+- Usar Prisma Migrate para todos los cambios de esquema.
+- Migraciones deben ser versionadas, revisadas y probadas antes de aplicar en producción.
+- No usar `prisma db push` en producción (solo desarrollo).
+- Revisar el SQL generado por las migraciones antes de aplicarlas.
+- Documentar migraciones complejas con comentarios.
+
+#### 7. Optimización de queries
+
+- Optimizar queries con `select` e `include` mínimos.
+- Nunca traer columnas o relaciones que no se usan.
+- Esto reduce latencia y carga de BD.
+- Usar `select` para especificar solo los campos necesarios.
+- Usar `include` solo cuando realmente se necesiten las relaciones.
+- Considerar paginación para listados grandes.
+
+#### 8. Transacciones para operaciones relacionadas
+
+- Agrupar operaciones relacionadas en transacciones (`prisma.$transaction`).
+- Mantener consistencia en operaciones complejas (por ejemplo, crear orden + ítems + movimiento de saldo).
+- Usar transacciones para operaciones que deben ser atómicas.
+- Manejar rollback correctamente en caso de error.
+
+#### 9. Manejo centralizado de errores de Prisma
+
+- Capturar errores de Prisma centralizadamente.
+- Mapear errores de constraint (P2002 para unique, P2003 para foreign key, etc.) a respuestas de dominio.
+- Traducir códigos de error de Prisma a códigos HTTP apropiados (409 Conflict, 400 Bad Request, etc.).
+- No filtrar detalles internos de Prisma al cliente.
+- Loguear errores completos internamente para debugging.
+
+#### 10. Uso limitado de prisma.$queryRaw
+
+- Limitar el uso de `prisma.$queryRaw` solo a casos justificados:
+  - Tuning extremo de performance.
+  - Funciones específicas del motor de BD.
+  - Queries complejas que Prisma no puede expresar fácilmente.
+- Siempre usar parámetros en `$queryRaw`, nunca concatenar strings.
+- Validar y sanitizar inputs antes de pasarlos a `$queryRaw`.
+- Documentar por qué se usa `$queryRaw` en lugar de la API de Prisma.
+

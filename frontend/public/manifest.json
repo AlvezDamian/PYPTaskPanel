@@ -1,0 +1,25 @@
+{
+  "short_name": "TaskPanel",
+  "name": "TaskPanel - Gestión de Tareas",
+  "icons": [
+    {
+      "src": "short-black-logo-KlOLxQxG.png",
+      "sizes": "any",
+      "type": "image/png"
+    },
+    {
+      "src": "short-black-logo-KlOLxQxG.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "short-black-logo-KlOLxQxG.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
