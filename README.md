@@ -2,6 +2,17 @@
 
 A full-stack task management application built with React (frontend) and NestJS (backend), featuring JWT authentication, role-based access control, and MySQL database with Prisma ORM.
 
+## Test Credentials
+
+To test the application, you can register with any email and password, or use the following test credentials:
+
+**Test User:**
+- **Email:** `test@test.com`
+- **Password:** `test123`
+- **Role:** `USER` (default)
+
+**Note:** If the user doesn't exist, you can create it by registering in the application. New users have the `USER` role by default. To create a user with `ADMIN` role, you need to modify the database directly or use the user management script.
+
 ## Project Structure
 
 ```
