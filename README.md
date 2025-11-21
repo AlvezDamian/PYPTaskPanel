@@ -123,11 +123,13 @@ npx prisma generate
 
 ## Quick Start
 
+> 📖 **Para una guía detallada paso a paso, consulta [LOCAL_SETUP.md](./LOCAL_SETUP.md)**
+
 ### Prerequisites
 
 - **Node.js 20.19.0+ (LTS)** - Required. See [Version Requirements](#version-requirements) for details.
-- MySQL 8.0 or higher
-- npm or yarn
+- **MySQL 8.0 or higher** - Database server running locally or remotely
+- **npm or yarn** - Package manager
 
 **Important**: This project requires Node.js 20 LTS. Node.js 24 is not supported due to Prisma compatibility issues.
 

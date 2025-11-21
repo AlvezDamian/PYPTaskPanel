@@ -23,7 +23,7 @@ The backend follows a modular architecture following SOLID principles:
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
+- **Node.js 20.19.0+ (LTS)** - Required. See main README for version requirements.
 - MySQL database (v8.0 or higher)
 - npm or yarn
 
